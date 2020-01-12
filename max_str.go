@@ -34,7 +34,7 @@ func (h *MaxStr) Init() {
 // Push pushes the element x onto the heap.
 // The complexity is O(log n) where n = h.length().
 func (h *MaxStr) Push(x string) {
-	h.push(x)
+	*h = append(*h, x)
 	h.up(h.length() - 1)
 }
 
@@ -45,7 +45,9 @@ func (h *MaxStr) Pop() string {
 	n := h.length() - 1
 	h.swap(0, n)
 	h.down(0, n)
-	return h.pop()
+	var x string
+	*h, x = (*h)[:h.length()-1], (*h)[h.length()-1]
+	return x
 }
 
 // Remove removes and returns the element at index i from the heap.
@@ -58,7 +60,9 @@ func (h *MaxStr) Remove(i int) string {
 			h.up(i)
 		}
 	}
-	return h.pop()
+	var x string
+	*h, x = (*h)[:h.length()-1], (*h)[h.length()-1]
+	return x
 }
 
 // Fix re-establishes the heap ordering after the element at index i has changed its value.
@@ -105,12 +109,3 @@ func (h *MaxStr) down(i0, n int) bool {
 func (h MaxStr) length() int        { return len(h) }
 func (h MaxStr) less(i, j int) bool { return h[i] > h[j] }
 func (h MaxStr) swap(i, j int)      { h[i], h[j] = h[j], h[i] }
-
-func (h *MaxStr) push(x string) {
-	*h = append(*h, x)
-}
-
-func (h *MaxStr) pop() (x string) {
-	*h, x = (*h)[:h.length()-1], (*h)[h.length()-1]
-	return
-}

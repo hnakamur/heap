@@ -69,7 +69,7 @@ func TestMaxStr(t *testing.T) {
 	h.verify(t, 0)
 
 	for i := 30; i > 20; i-- {
-		h.push(toHex(uint64(i)))
+		*h = append(*h, toHex(uint64(i)))
 	}
 	h.Init()
 	h.verify(t, 0)
@@ -94,7 +94,7 @@ func TestMaxStr(t *testing.T) {
 func TestMaxStrRemove0(t *testing.T) {
 	h := new(MaxStr)
 	for i := 9; i >= 0; i-- {
-		h.push(toHex(uint64(i)))
+		*h = append(*h, toHex(uint64(i)))
 	}
 	h.verify(t, 0)
 
@@ -111,7 +111,7 @@ func TestMaxStrRemove0(t *testing.T) {
 func TestMaxStrRemove1(t *testing.T) {
 	h := new(MaxStr)
 	for i := 9; i >= 0; i-- {
-		h.push(toHex(uint64(i)))
+		*h = append(*h, toHex(uint64(i)))
 	}
 	h.verify(t, 0)
 
@@ -129,7 +129,7 @@ func TestMaxStrRemove2(t *testing.T) {
 
 	h := new(MaxStr)
 	for i := N - 1; i >= 0; i-- {
-		h.push(toHex(uint64(i)))
+		*h = append(*h, toHex(uint64(i)))
 	}
 	h.verify(t, 0)
 
