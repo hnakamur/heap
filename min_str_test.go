@@ -5,11 +5,13 @@
 package strheap
 
 import (
+	"encoding/binary"
+	"encoding/hex"
 	"math/rand"
 	"testing"
 )
 
-func (h *MaxStrHeap) verify(t *testing.T, i int) {
+func (h *MinStr) verify(t *testing.T, i int) {
 	t.Helper()
 	n := h.Len()
 	j1 := 2*i + 1
@@ -30,8 +32,8 @@ func (h *MaxStrHeap) verify(t *testing.T, i int) {
 	}
 }
 
-func TestMaxStrHeapInit0(t *testing.T) {
-	h := new(MaxStrHeap)
+func TestMinStrInit0(t *testing.T) {
+	h := new(MinStr)
 	for i := 20; i > 0; i-- {
 		h.Push("0") // all elements are the same
 	}
@@ -47,15 +49,15 @@ func TestMaxStrHeapInit0(t *testing.T) {
 	}
 }
 
-func TestMaxStrHeapInit1(t *testing.T) {
-	h := new(MaxStrHeap)
+func TestMinStrInit1(t *testing.T) {
+	h := new(MinStr)
 	for i := 20; i > 0; i-- {
 		h.Push(toHex(uint64(i))) // all elements are different
 	}
 	h.Init()
 	h.verify(t, 0)
 
-	for i := 20; h.Len() > 0; i-- {
+	for i := 1; h.Len() > 0; i++ {
 		x := h.Pop()
 		h.verify(t, 0)
 		if x != toHex(uint64(i)) {
@@ -64,25 +66,25 @@ func TestMaxStrHeapInit1(t *testing.T) {
 	}
 }
 
-func TestMaxStrHeap(t *testing.T) {
-	h := new(MaxStrHeap)
+func TestMinStr(t *testing.T) {
+	h := new(MinStr)
 	h.verify(t, 0)
 
-	for i := 30; i > 20; i-- {
+	for i := 20; i > 10; i-- {
 		h.push(toHex(uint64(i)))
 	}
 	h.Init()
 	h.verify(t, 0)
 
-	for i := 20; i > 10; i-- {
+	for i := 10; i > 0; i-- {
 		h.Push(toHex(uint64(i)))
 		h.verify(t, 0)
 	}
 
-	for i := 30; h.Len() > 0; i-- {
+	for i := 1; h.Len() > 0; i++ {
 		x := h.Pop()
-		if i < 10 {
-			h.Push(toHex(uint64(i)))
+		if i < 20 {
+			h.Push(toHex(uint64(20 + i)))
 		}
 		h.verify(t, 0)
 		if x != toHex(uint64(i)) {
@@ -91,9 +93,9 @@ func TestMaxStrHeap(t *testing.T) {
 	}
 }
 
-func TestMaxStrHeapRemove0(t *testing.T) {
-	h := new(MaxStrHeap)
-	for i := 9; i >= 0; i-- {
+func TestMinStrRemove0(t *testing.T) {
+	h := new(MinStr)
+	for i := 0; i < 10; i++ {
 		h.push(toHex(uint64(i)))
 	}
 	h.verify(t, 0)
@@ -101,34 +103,34 @@ func TestMaxStrHeapRemove0(t *testing.T) {
 	for h.Len() > 0 {
 		i := h.Len() - 1
 		x := h.Remove(i)
-		if x != toHex(uint64(9-i)) {
-			t.Errorf("Remove(%d) got %s; want %s", i, x, toHex(uint64(9-i)))
+		if x != toHex(uint64(i)) {
+			t.Errorf("Remove(%d) got %s; want %s", i, x, toHex(uint64(i)))
 		}
 		h.verify(t, 0)
 	}
 }
 
-func TestMaxStrHeapRemove1(t *testing.T) {
-	h := new(MaxStrHeap)
-	for i := 9; i >= 0; i-- {
+func TestMinStrRemove1(t *testing.T) {
+	h := new(MinStr)
+	for i := 0; i < 10; i++ {
 		h.push(toHex(uint64(i)))
 	}
 	h.verify(t, 0)
 
 	for i := 0; h.Len() > 0; i++ {
 		x := h.Remove(0)
-		if x != toHex(uint64(9-i)) {
-			t.Errorf("Remove(0) got %s; want %s", x, toHex(uint64(9-i)))
+		if x != toHex(uint64(i)) {
+			t.Errorf("Remove(0) got %s; want %s", x, toHex(uint64(i)))
 		}
 		h.verify(t, 0)
 	}
 }
 
-func TestMaxStrHeapRemove2(t *testing.T) {
+func TestMinStrRemove2(t *testing.T) {
 	N := 10
 
-	h := new(MaxStrHeap)
-	for i := N - 1; i >= 0; i-- {
+	h := new(MinStr)
+	for i := 0; i < N; i++ {
 		h.push(toHex(uint64(i)))
 	}
 	h.verify(t, 0)
@@ -150,9 +152,9 @@ func TestMaxStrHeapRemove2(t *testing.T) {
 	}
 }
 
-func BenchmarkMaxStrHeapDup(b *testing.B) {
+func BenchmarkMinStrDup(b *testing.B) {
 	const n = 10000
-	h := make(MaxStrHeap, 0, n)
+	h := make(MinStr, 0, n)
 	for i := 0; i < b.N; i++ {
 		for j := 0; j < n; j++ {
 			h.Push("0") // all elements are the same
@@ -163,8 +165,8 @@ func BenchmarkMaxStrHeapDup(b *testing.B) {
 	}
 }
 
-func TestMaxStrHeapFix(t *testing.T) {
-	h := new(MaxStrHeap)
+func TestMinStrFix(t *testing.T) {
+	h := new(MinStr)
 	h.verify(t, 0)
 
 	for i := 200; i > 0; i -= 10 {
@@ -172,8 +174,8 @@ func TestMaxStrHeapFix(t *testing.T) {
 	}
 	h.verify(t, 0)
 
-	if (*h)[0] != toHex(200) {
-		t.Fatalf("Expected head to be 200, was %s", (*h)[0])
+	if (*h)[0] != toHex(10) {
+		t.Fatalf("Expected head to be 10, was %s", (*h)[0])
 	}
 	(*h)[0] = toHex(210)
 	h.Fix(0)
@@ -189,4 +191,19 @@ func TestMaxStrHeapFix(t *testing.T) {
 		h.Fix(elem)
 		h.verify(t, 0)
 	}
+}
+
+func toHex(i uint64) string {
+	var b [8]byte
+	binary.BigEndian.PutUint64(b[:], i)
+	return hex.EncodeToString(b[:])
+}
+
+func fromHex(t *testing.T, h string) uint64 {
+	t.Helper()
+	b, err := hex.DecodeString(h)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return binary.BigEndian.Uint64(b)
 }

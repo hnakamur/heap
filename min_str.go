@@ -19,22 +19,22 @@ package strheap
 import "sort"
 
 // StrMaxHeap is a heap for getting the minimum string value.
-type StrHeap []string
+type MinStr []string
 
 // Len implements sort.Interface.
-func (h StrHeap) Len() int { return len(h) }
+func (h MinStr) Len() int { return len(h) }
 
 // Less implements sort.Interface.
-func (h StrHeap) Less(i, j int) bool { return h[i] < h[j] }
+func (h MinStr) Less(i, j int) bool { return h[i] < h[j] }
 
 // Swap implements sort.Interface.
-func (h StrHeap) Swap(i, j int) { h[i], h[j] = h[j], h[i] }
+func (h MinStr) Swap(i, j int) { h[i], h[j] = h[j], h[i] }
 
 // Init establishes the heap invariants required by the other routines in this package.
 // Init is idempotent with respect to the heap invariants
 // and may be called whenever the heap invariants may have been invalidated.
 // The complexity is O(n) where n = h.Len().
-func (h *StrHeap) Init() {
+func (h *MinStr) Init() {
 	// heapify
 	n := h.Len()
 	for i := n/2 - 1; i >= 0; i-- {
@@ -44,7 +44,7 @@ func (h *StrHeap) Init() {
 
 // Push pushes the element x onto the heap.
 // The complexity is O(log n) where n = h.Len().
-func (h *StrHeap) Push(x string) {
+func (h *MinStr) Push(x string) {
 	h.push(x)
 	up(h, h.Len()-1)
 }
@@ -52,7 +52,7 @@ func (h *StrHeap) Push(x string) {
 // Pop removes and returns the minimum element (according to Less) from the heap.
 // The complexity is O(log n) where n = h.Len().
 // Pop is equivalent to Remove(h, 0).
-func (h *StrHeap) Pop() string {
+func (h *MinStr) Pop() string {
 	n := h.Len() - 1
 	h.Swap(0, n)
 	down(h, 0, n)
@@ -61,7 +61,7 @@ func (h *StrHeap) Pop() string {
 
 // Remove removes and returns the element at index i from the heap.
 // The complexity is O(log n) where n = h.Len().
-func (h *StrHeap) Remove(i int) string {
+func (h *MinStr) Remove(i int) string {
 	n := h.Len() - 1
 	if n != i {
 		h.Swap(i, n)
@@ -76,17 +76,17 @@ func (h *StrHeap) Remove(i int) string {
 // Changing the value of the element at index i and then calling Fix is equivalent to,
 // but less expensive than, calling Remove(h, i) followed by a Push of the new value.
 // The complexity is O(log n) where n = h.Len().
-func (h *StrHeap) Fix(i int) {
+func (h *MinStr) Fix(i int) {
 	if !down(h, i, h.Len()) {
 		up(h, i)
 	}
 }
 
-func (h *StrHeap) push(x string) {
+func (h *MinStr) push(x string) {
 	*h = append(*h, x)
 }
 
-func (h *StrHeap) pop() (x string) {
+func (h *MinStr) pop() (x string) {
 	*h, x = (*h)[:h.Len()-1], (*h)[h.Len()-1]
 	return
 }

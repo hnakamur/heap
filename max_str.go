@@ -16,23 +16,23 @@
 //
 package strheap
 
-// MaxStrHeap is a heap for getting the maximum string value.
-type MaxStrHeap []string
+// MaxStr is a heap for getting the maximum string value.
+type MaxStr []string
 
 // Len implements sort.Interface.
-func (h MaxStrHeap) Len() int { return len(h) }
+func (h MaxStr) Len() int { return len(h) }
 
 // Less implements sort.Interface.
-func (h MaxStrHeap) Less(i, j int) bool { return h[i] > h[j] }
+func (h MaxStr) Less(i, j int) bool { return h[i] > h[j] }
 
 // Swap implements sort.Interface.
-func (h MaxStrHeap) Swap(i, j int) { h[i], h[j] = h[j], h[i] }
+func (h MaxStr) Swap(i, j int) { h[i], h[j] = h[j], h[i] }
 
 // Init establishes the heap invariants required by the other routines in this package.
 // Init is idempotent with respect to the heap invariants
 // and may be called whenever the heap invariants may have been invalidated.
 // The complexity is O(n) where n = h.Len().
-func (h *MaxStrHeap) Init() {
+func (h *MaxStr) Init() {
 	// heapify
 	n := h.Len()
 	for i := n/2 - 1; i >= 0; i-- {
@@ -42,7 +42,7 @@ func (h *MaxStrHeap) Init() {
 
 // Push pushes the element x onto the heap.
 // The complexity is O(log n) where n = h.Len().
-func (h *MaxStrHeap) Push(x string) {
+func (h *MaxStr) Push(x string) {
 	h.push(x)
 	up(h, h.Len()-1)
 }
@@ -50,7 +50,7 @@ func (h *MaxStrHeap) Push(x string) {
 // Pop removes and returns the minimum element (according to Less) from the heap.
 // The complexity is O(log n) where n = h.Len().
 // Pop is equivalent to Remove(h, 0).
-func (h *MaxStrHeap) Pop() string {
+func (h *MaxStr) Pop() string {
 	n := h.Len() - 1
 	h.Swap(0, n)
 	down(h, 0, n)
@@ -59,7 +59,7 @@ func (h *MaxStrHeap) Pop() string {
 
 // Remove removes and returns the element at index i from the heap.
 // The complexity is O(log n) where n = h.Len().
-func (h *MaxStrHeap) Remove(i int) string {
+func (h *MaxStr) Remove(i int) string {
 	n := h.Len() - 1
 	if n != i {
 		h.Swap(i, n)
@@ -74,17 +74,17 @@ func (h *MaxStrHeap) Remove(i int) string {
 // Changing the value of the element at index i and then calling Fix is equivalent to,
 // but less expensive than, calling Remove(h, i) followed by a Push of the new value.
 // The complexity is O(log n) where n = h.Len().
-func (h *MaxStrHeap) Fix(i int) {
+func (h *MaxStr) Fix(i int) {
 	if !down(h, i, h.Len()) {
 		up(h, i)
 	}
 }
 
-func (h *MaxStrHeap) push(x string) {
+func (h *MaxStr) push(x string) {
 	*h = append(*h, x)
 }
 
-func (h *MaxStrHeap) pop() (x string) {
+func (h *MaxStr) pop() (x string) {
 	*h, x = (*h)[:h.Len()-1], (*h)[h.Len()-1]
 	return
 }

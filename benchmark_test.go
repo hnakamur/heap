@@ -50,7 +50,7 @@ func BenchmarkHeapAndSort(b *testing.B) {
 			values2 := cloneStringList(values)
 			b.StartTimer()
 
-			h := MaxStrHeap(make([]string, 0, len(values2)))
+			h := MaxStr(make([]string, 0, len(values2)))
 			h.Init()
 			for _, v := range values2 {
 				h.Push(v)
