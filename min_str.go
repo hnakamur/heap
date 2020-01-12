@@ -16,8 +16,6 @@
 //
 package strheap
 
-import "sort"
-
 // StrMaxHeap is a heap for getting the minimum string value.
 type MinStr []string
 
@@ -38,7 +36,7 @@ func (h *MinStr) Init() {
 	// heapify
 	n := h.Len()
 	for i := n/2 - 1; i >= 0; i-- {
-		down(h, i, n)
+		h.down(i, n)
 	}
 }
 
@@ -46,7 +44,7 @@ func (h *MinStr) Init() {
 // The complexity is O(log n) where n = h.Len().
 func (h *MinStr) Push(x string) {
 	h.push(x)
-	up(h, h.Len()-1)
+	h.up(h.Len() - 1)
 }
 
 // Pop removes and returns the minimum element (according to Less) from the heap.
@@ -55,7 +53,7 @@ func (h *MinStr) Push(x string) {
 func (h *MinStr) Pop() string {
 	n := h.Len() - 1
 	h.Swap(0, n)
-	down(h, 0, n)
+	h.down(0, n)
 	return h.pop()
 }
 
@@ -65,8 +63,8 @@ func (h *MinStr) Remove(i int) string {
 	n := h.Len() - 1
 	if n != i {
 		h.Swap(i, n)
-		if !down(h, i, n) {
-			up(h, i)
+		if !h.down(i, n) {
+			h.up(i)
 		}
 	}
 	return h.pop()
@@ -77,8 +75,8 @@ func (h *MinStr) Remove(i int) string {
 // but less expensive than, calling Remove(h, i) followed by a Push of the new value.
 // The complexity is O(log n) where n = h.Len().
 func (h *MinStr) Fix(i int) {
-	if !down(h, i, h.Len()) {
-		up(h, i)
+	if !h.down(i, h.Len()) {
+		h.up(i)
 	}
 }
 
@@ -91,7 +89,7 @@ func (h *MinStr) pop() (x string) {
 	return
 }
 
-func up(h sort.Interface, j int) {
+func (h *MinStr) up(j int) {
 	for {
 		i := (j - 1) / 2 // parent
 		if i == j || !h.Less(j, i) {
@@ -102,7 +100,7 @@ func up(h sort.Interface, j int) {
 	}
 }
 
-func down(h sort.Interface, i0, n int) bool {
+func (h *MinStr) down(i0, n int) bool {
 	i := i0
 	for {
 		j1 := 2*i + 1
