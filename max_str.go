@@ -14,7 +14,7 @@
 // highest-priority item from the queue. The Examples include such an
 // implementation; the file example_pq_test.go has the complete source.
 //
-package strheap
+package heap
 
 // MaxStr is a heap for getting the maximum string value.
 type MaxStr []string
@@ -74,7 +74,7 @@ func (h *MaxStr) Fix(i int) {
 func (h *MaxStr) up(j int) {
 	for {
 		i := (j - 1) / 2 // parent
-		if i == j || !h.less(j, i) {
+		if i == j || (*h)[j] <= (*h)[i] {
 			break
 		}
 		h.swap(i, j)
@@ -90,10 +90,10 @@ func (h *MaxStr) down(i0, n int) bool {
 			break
 		}
 		j := j1 // left child
-		if j2 := j1 + 1; j2 < n && h.less(j2, j1) {
+		if j2 := j1 + 1; j2 < n && (*h)[j2] > (*h)[j1] {
 			j = j2 // = 2*i + 2  // right child
 		}
-		if !h.less(j, i) {
+		if (*h)[j] <= (*h)[i] {
 			break
 		}
 		h.swap(i, j)
@@ -102,9 +102,8 @@ func (h *MaxStr) down(i0, n int) bool {
 	return i > i0
 }
 
-func (h MaxStr) length() int        { return len(h) }
-func (h MaxStr) less(i, j int) bool { return h[i] > h[j] }
-func (h MaxStr) swap(i, j int)      { h[i], h[j] = h[j], h[i] }
+func (h MaxStr) length() int   { return len(h) }
+func (h MaxStr) swap(i, j int) { h[i], h[j] = h[j], h[i] }
 
 func (h *MaxStr) push(x string) {
 	*h = append(*h, x)

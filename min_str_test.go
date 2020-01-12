@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package strheap
+package heap
 
 import (
 	"encoding/binary"
@@ -17,14 +17,14 @@ func (h *MinStr) verify(t *testing.T, i int) {
 	j1 := 2*i + 1
 	j2 := 2*i + 2
 	if j1 < n {
-		if h.less(j1, i) {
+		if (*h)[j1] < (*h)[i] {
 			t.Errorf("heap invariant invalidated [%d] = %s > [%d] = %s", i, (*h)[i], j1, (*h)[j1])
 			return
 		}
 		h.verify(t, j1)
 	}
 	if j2 < n {
-		if h.less(j2, i) {
+		if (*h)[j2] < (*h)[i] {
 			t.Errorf("heap invariant invalidated [%d] = %s > [%d] = %s", i, (*h)[i], j1, (*h)[j2])
 			return
 		}

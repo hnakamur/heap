@@ -14,7 +14,7 @@
 // highest-priority item from the queue. The Examples include such an
 // implementation; the file example_pq_test.go has the complete source.
 //
-package strheap
+package heap
 
 // StrMaxHeap is a heap for getting the minimum string value.
 type MinStr []string
@@ -74,7 +74,7 @@ func (h *MinStr) Fix(i int) {
 func (h *MinStr) up(j int) {
 	for {
 		i := (j - 1) / 2 // parent
-		if i == j || !h.less(j, i) {
+		if i == j || (*h)[j] >= (*h)[i] {
 			break
 		}
 		h.swap(i, j)
@@ -90,10 +90,10 @@ func (h *MinStr) down(i0, n int) bool {
 			break
 		}
 		j := j1 // left child
-		if j2 := j1 + 1; j2 < n && h.less(j2, j1) {
+		if j2 := j1 + 1; j2 < n && (*h)[j2] < (*h)[j1] {
 			j = j2 // = 2*i + 2  // right child
 		}
-		if !h.less(j, i) {
+		if (*h)[j] >= (*h)[i] {
 			break
 		}
 		h.swap(i, j)
@@ -102,9 +102,8 @@ func (h *MinStr) down(i0, n int) bool {
 	return i > i0
 }
 
-func (h MinStr) length() int        { return len(h) }
-func (h MinStr) less(i, j int) bool { return h[i] < h[j] }
-func (h MinStr) swap(i, j int)      { h[i], h[j] = h[j], h[i] }
+func (h MinStr) length() int   { return len(h) }
+func (h MinStr) swap(i, j int) { h[i], h[j] = h[j], h[i] }
 
 func (h *MinStr) push(x string) {
 	*h = append(*h, x)
