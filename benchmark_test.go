@@ -9,40 +9,6 @@ import (
 	"testing"
 )
 
-func TestHeapAndSort(t *testing.T) {
-	const n = 100_000
-	values := make([]string, n)
-	for i := 0; i < n; i++ {
-		var b [8]byte
-		binary.BigEndian.PutUint64(b[:], uint64(i))
-		values[i] = hex.EncodeToString(b[:])
-	}
-	want := values[len(values)-1]
-	rand.Shuffle(n, func(i, j int) {
-		values[i], values[j] = values[j], values[i]
-	})
-
-	t.Run("sort", func(t *testing.T) {
-		values2 := cloneStringList(values)
-		sort.Strings(values2)
-		got := values2[len(values2)-1]
-		if got != want {
-			t.Errorf("max value unmatch, got=%s, want=%s", got, want)
-		}
-	})
-	t.Run("heap", func(t *testing.T) {
-		h := strMaxHeap(make([]string, 0, len(values)))
-		heap.Init(&h)
-		for _, v := range values {
-			heap.Push(&h, v)
-		}
-		got := heap.Pop(&h).(string)
-		if got != want {
-			t.Errorf("max value unmatch, got=%s, want=%s", got, want)
-		}
-	})
-}
-
 func BenchmarkHeapAndSort(b *testing.B) {
 	const n = 100_000
 	values := make([]string, n)
@@ -76,6 +42,20 @@ func BenchmarkHeapAndSort(b *testing.B) {
 				heap.Push(&h, v)
 			}
 			_ = heap.Pop(&h).(string)
+		}
+	})
+	b.Run("strmaxheap", func(b *testing.B) {
+		for i := 0; i < b.N; i++ {
+			b.StopTimer()
+			values2 := cloneStringList(values)
+			b.StartTimer()
+
+			h := MaxStrHeap(make([]string, 0, len(values2)))
+			h.Init()
+			for _, v := range values2 {
+				h.Push(v)
+			}
+			_ = h.Pop()
 		}
 	})
 }
