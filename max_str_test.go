@@ -11,18 +11,18 @@ import (
 
 func (h *MaxStr) verify(t *testing.T, i int) {
 	t.Helper()
-	n := h.Len()
+	n := h.length()
 	j1 := 2*i + 1
 	j2 := 2*i + 2
 	if j1 < n {
-		if h.Less(j1, i) {
+		if h.less(j1, i) {
 			t.Errorf("heap invariant invalidated [%d] = %s > [%d] = %s", i, (*h)[i], j1, (*h)[j1])
 			return
 		}
 		h.verify(t, j1)
 	}
 	if j2 < n {
-		if h.Less(j2, i) {
+		if h.less(j2, i) {
 			t.Errorf("heap invariant invalidated [%d] = %s > [%d] = %s", i, (*h)[i], j1, (*h)[j2])
 			return
 		}
@@ -38,7 +38,7 @@ func TestMaxStrInit0(t *testing.T) {
 	h.Init()
 	h.verify(t, 0)
 
-	for i := 1; h.Len() > 0; i++ {
+	for i := 1; h.length() > 0; i++ {
 		x := h.Pop()
 		h.verify(t, 0)
 		if x != "0" {
@@ -55,7 +55,7 @@ func TestMaxStrInit1(t *testing.T) {
 	h.Init()
 	h.verify(t, 0)
 
-	for i := 20; h.Len() > 0; i-- {
+	for i := 20; h.length() > 0; i-- {
 		x := h.Pop()
 		h.verify(t, 0)
 		if x != toHex(uint64(i)) {
@@ -79,7 +79,7 @@ func TestMaxStr(t *testing.T) {
 		h.verify(t, 0)
 	}
 
-	for i := 30; h.Len() > 0; i-- {
+	for i := 30; h.length() > 0; i-- {
 		x := h.Pop()
 		if i < 10 {
 			h.Push(toHex(uint64(i)))
@@ -98,8 +98,8 @@ func TestMaxStrRemove0(t *testing.T) {
 	}
 	h.verify(t, 0)
 
-	for h.Len() > 0 {
-		i := h.Len() - 1
+	for h.length() > 0 {
+		i := h.length() - 1
 		x := h.Remove(i)
 		if x != toHex(uint64(9-i)) {
 			t.Errorf("Remove(%d) got %s; want %s", i, x, toHex(uint64(9-i)))
@@ -115,7 +115,7 @@ func TestMaxStrRemove1(t *testing.T) {
 	}
 	h.verify(t, 0)
 
-	for i := 0; h.Len() > 0; i++ {
+	for i := 0; h.length() > 0; i++ {
 		x := h.Remove(0)
 		if x != toHex(uint64(9-i)) {
 			t.Errorf("Remove(0) got %s; want %s", x, toHex(uint64(9-i)))
@@ -134,8 +134,8 @@ func TestMaxStrRemove2(t *testing.T) {
 	h.verify(t, 0)
 
 	m := make(map[string]bool)
-	for h.Len() > 0 {
-		m[h.Remove((h.Len()-1)/2)] = true
+	for h.length() > 0 {
+		m[h.Remove((h.length()-1)/2)] = true
 		h.verify(t, 0)
 	}
 
@@ -157,7 +157,7 @@ func BenchmarkMaxStrDup(b *testing.B) {
 		for j := 0; j < n; j++ {
 			h.Push("0") // all elements are the same
 		}
-		for h.Len() > 0 {
+		for h.length() > 0 {
 			h.Pop()
 		}
 	}
@@ -180,7 +180,7 @@ func TestMaxStrFix(t *testing.T) {
 	h.verify(t, 0)
 
 	for i := 100; i > 0; i-- {
-		elem := rand.Intn(h.Len())
+		elem := rand.Intn(h.length())
 		if i&1 == 0 {
 			(*h)[elem] = toHex(fromHex(t, (*h)[elem]) * 2)
 		} else {
