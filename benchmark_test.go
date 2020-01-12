@@ -1,4 +1,4 @@
-package strheap
+package heap
 
 import (
 	"container/heap"
@@ -44,7 +44,7 @@ func BenchmarkHeapAndSort(b *testing.B) {
 			_ = heap.Pop(&h).(string)
 		}
 	})
-	b.Run("strmaxheap", func(b *testing.B) {
+	b.Run("maxstr", func(b *testing.B) {
 		for i := 0; i < b.N; i++ {
 			b.StopTimer()
 			values2 := cloneStringList(values)

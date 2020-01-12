@@ -1,3 +1,3 @@
-module bitbucket.org/hnakamur/strheap
+module github.com/hnakamur/heap
 
 go 1.13

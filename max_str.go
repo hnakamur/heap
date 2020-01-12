@@ -2,19 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-// Package heap provides heap operations for any type that implements
-// heap.Interface. A heap is a tree with the property that each node is the
-// minimum-valued node in its subtree.
-//
-// The minimum element in the tree is the root, at index 0.
-//
-// A heap is a common way to implement a priority queue. To build a priority
-// queue, implement the Heap interface with the (negative) priority as the
-// ordering for the less method, so Push adds items while Pop removes the
-// highest-priority item from the queue. The Examples include such an
-// implementation; the file example_pq_test.go has the complete source.
-//
-package strheap
+package heap
 
 // MaxStr is a heap for getting the maximum string value.
 type MaxStr []string
@@ -22,7 +10,7 @@ type MaxStr []string
 // Init establishes the heap invariants required by the other routines in this package.
 // Init is idempotent with respect to the heap invariants
 // and may be called whenever the heap invariants may have been invalidated.
-// The complexity is O(n) where n = h.length().
+// The complexity is O(n) where n = len(*h).
 func (h *MaxStr) Init() {
 	// heapify
 	n := h.length()
@@ -32,14 +20,14 @@ func (h *MaxStr) Init() {
 }
 
 // Push pushes the element x onto the heap.
-// The complexity is O(log n) where n = h.length().
+// The complexity is O(log n) where n = len(*h).
 func (h *MaxStr) Push(x string) {
 	h.push(x)
 	h.up(h.length() - 1)
 }
 
-// Pop removes and returns the minimum element (according to less) from the heap.
-// The complexity is O(log n) where n = h.length().
+// Pop removes and returns the maximum element from the heap.
+// The complexity is O(log n) where n = len(*h).
 // Pop is equivalent to Remove(h, 0).
 func (h *MaxStr) Pop() string {
 	n := h.length() - 1
@@ -49,7 +37,7 @@ func (h *MaxStr) Pop() string {
 }
 
 // Remove removes and returns the element at index i from the heap.
-// The complexity is O(log n) where n = h.length().
+// The complexity is O(log n) where n = len(*h).
 func (h *MaxStr) Remove(i int) string {
 	n := h.length() - 1
 	if n != i {
@@ -64,7 +52,7 @@ func (h *MaxStr) Remove(i int) string {
 // Fix re-establishes the heap ordering after the element at index i has changed its value.
 // Changing the value of the element at index i and then calling Fix is equivalent to,
 // but less expensive than, calling Remove(h, i) followed by a Push of the new value.
-// The complexity is O(log n) where n = h.length().
+// The complexity is O(log n) where n = len(*h).
 func (h *MaxStr) Fix(i int) {
 	if !h.down(i, h.length()) {
 		h.up(i)
